@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { getPlayerEntries } from '../utils/gameLogic';
+import { generateWrestlerId } from '../utils/stringUtils';
 
 const LiveMatchScreen = ({ players, assignments, wrestlers, eliminations, onUpdateWrestler, onToggleElimination, onCheckWinner }) => {
   const [wrestlerList, setWrestlerList] = useState([]);
