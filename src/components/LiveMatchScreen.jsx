@@ -2,10 +2,16 @@ import React, { useState, useEffect } from 'react';
 import { getPlayerEntries } from '../utils/gameLogic';
 import { generateWrestlerId } from '../utils/stringUtils';
 
-const LiveMatchScreen = ({ players, assignments, wrestlers, eliminations, onUpdateWrestler, onToggleElimination, onCheckWinner }) => {
+const LiveMatchScreen = ({ players, assignments, wrestlers, eliminations, onUpdateWrestler, onToggleElimination, onCheckWinner, onReset }) => {
   const [wrestlerList, setWrestlerList] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [editingEntry, setEditingEntry] = useState(null);
+
+  const handleResetClick = () => {
+    if (window.confirm('Are you sure you want to reset the game? All current progress will be lost.')) {
+      onReset();
+    }
+  };
 
   useEffect(() => {
     // Load wrestler list
@@ -226,6 +232,16 @@ const LiveMatchScreen = ({ players, assignments, wrestlers, eliminations, onUpda
             })}
           </div>
         </div>
+      </div>
+
+      <div className="mt-6 flex justify-center">
+        <button
+          onClick={handleResetClick}
+          className="bg-gray-700 hover:bg-gray-600 text-white px-6 py-3 rounded-lg font-semibold transition"
+          title="Reset game and return to setup"
+        >
+          ↺ Reset Game
+        </button>
       </div>
     </div>
   );

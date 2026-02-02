@@ -105,6 +105,7 @@ function App() {
           onUpdateWrestler={handleUpdateWrestler}
           onToggleElimination={handleToggleElimination}
           onCheckWinner={handleCheckWinner}
+          onReset={handleReset}
         />
       )}
 
