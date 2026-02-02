@@ -1,0 +1,82 @@
+[
+  {
+    "id": "roman_reigns",
+    "name": "Roman Reigns"
+  },
+  {
+    "id": "seth_rollins",
+    "name": "Seth Rollins"
+  },
+  {
+    "id": "cody_rhodes",
+    "name": "Cody Rhodes"
+  },
+  {
+    "id": "gunther",
+    "name": "Gunther"
+  },
+  {
+    "id": "cm_punk",
+    "name": "CM Punk"
+  },
+  {
+    "id": "john_cena",
+    "name": "John Cena"
+  },
+  {
+    "id": "drew_mcintyre",
+    "name": "Drew McIntyre"
+  },
+  {
+    "id": "randy_orton",
+    "name": "Randy Orton"
+  },
+  {
+    "id": "la_knight",
+    "name": "LA Knight"
+  },
+  {
+    "id": "kevin_owens",
+    "name": "Kevin Owens"
+  },
+  {
+    "id": "sami_zayn",
+    "name": "Sami Zayn"
+  },
+  {
+    "id": "shinsuke_nakamura",
+    "name": "Shinsuke Nakamura"
+  },
+  {
+    "id": "rey_mysterio",
+    "name": "Rey Mysterio"
+  },
+  {
+    "id": "damian_priest",
+    "name": "Damian Priest"
+  },
+  {
+    "id": "finn_balor",
+    "name": "Finn Balor"
+  },
+  {
+    "id": "jey_uso",
+    "name": "Jey Uso"
+  },
+  {
+    "id": "jimmy_uso",
+    "name": "Jimmy Uso"
+  },
+  {
+    "id": "ilja_dragunov",
+    "name": "Ilja Dragunov"
+  },
+  {
+    "id": "kofi_kingston",
+    "name": "Kofi Kingston"
+  },
+  {
+    "id": "xavier_woods",
+    "name": "Xavier Woods"
+  }
+]

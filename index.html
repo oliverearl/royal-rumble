@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Royal Rumble Party Assistant</title>
+    <style>
+      .noscript-warning {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        background: linear-gradient(135deg, #1a1a1a 0%, #2d1a1a 100%);
+        color: #ffffff;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+        text-align: center;
+        padding: 2rem;
+      }
+      .noscript-warning h1 {
+        font-size: 2.5rem;
+        color: #C8102E;
+        margin-bottom: 1rem;
+      }
+      .noscript-warning p {
+        font-size: 1.25rem;
+        max-width: 600px;
+        line-height: 1.6;
+        color: #e0e0e0;
+      }
+      .noscript-warning .icon {
+        font-size: 4rem;
+        margin-bottom: 1rem;
+      }
+    </style>
+  </head>
+  <body>
+    <noscript>
+      <div class="noscript-warning">
+        <div class="icon">⚠️</div>
+        <h1>JavaScript Required</h1>
+        <p>
+          The Royal Rumble Party Assistant requires JavaScript to function.
+          Please enable JavaScript in your browser settings to use this application.
+        </p>
+        <p style="margin-top: 2rem; font-size: 1rem; color: #999;">
+          This is a client-side React application that needs JavaScript to run.
+        </p>
+      </div>
+    </noscript>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>
