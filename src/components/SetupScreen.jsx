@@ -181,6 +181,12 @@ const SetupScreen = ({ onStartGame }) => {
           </button>
         </div>
 
+        {players.length < 2 && (
+          <div className="mb-4 bg-yellow-900/30 border border-yellow-600 text-yellow-200 px-4 py-2 rounded text-sm">
+            ⚠️ At least 2 players required to start the game
+          </div>
+        )}
+
         <div className="space-y-3">
           {players.map((player, index) => (
             <div key={index} className="flex gap-3 items-start bg-gray-700 p-3 rounded">
