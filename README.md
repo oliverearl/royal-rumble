@@ -107,8 +107,11 @@ Simply add wrestler names to the array. IDs are generated automatically from the
 ### Live Match Phase
 1. As wrestlers enter, click on each entry to add the wrestler's name
 2. Use the autocomplete or type freely
-3. Click "✕ Eliminate" when a wrestler is eliminated
-4. Player standings update in real-time
+3. Each wrestler can only be assigned once (duplicates are prevented)
+4. Click "✕ Eliminate" when a wrestler is eliminated
+5. Player standings update in real-time
+
+**Note:** The autocomplete will automatically hide wrestlers that have already been assigned to other entries.
 
 ### Winner Phase
 - Automatically triggered when only one entry remains

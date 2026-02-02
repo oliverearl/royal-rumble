@@ -28,14 +28,46 @@ const LiveMatchScreen = ({ players, assignments, wrestlers, eliminations, onUpda
     return 30 - eliminations.length;
   };
 
+  const getUsedWrestlers = () => {
+    // Get all wrestler names currently assigned (excluding the one being edited)
+    return Object.entries(wrestlers)
+      .filter(([entry, name]) => parseInt(entry) !== editingEntry && name)
+      .map(([_, name]) => name.toLowerCase().trim());
+  };
+
   const getFilteredWrestlers = (search) => {
     if (!search) return wrestlerList;
     const lower = search.toLowerCase();
-    return wrestlerList.filter(w => w.name.toLowerCase().includes(lower));
+    const usedWrestlers = getUsedWrestlers();
+
+    return wrestlerList.filter(name =>
+      name.toLowerCase().includes(lower) &&
+      !usedWrestlers.includes(name.toLowerCase())
+    );
+  };
+
+  const isWrestlerAlreadyUsed = (wrestlerName) => {
+    const usedWrestlers = getUsedWrestlers();
+    return usedWrestlers.includes(wrestlerName.toLowerCase().trim());
   };
 
   const handleWrestlerSelect = (entryNum, wrestlerName) => {
-    onUpdateWrestler(entryNum, wrestlerName);
+    const trimmedName = wrestlerName.trim();
+
+    if (!trimmedName) {
+      setEditingEntry(null);
+      setSearchTerm('');
+      return;
+    }
+
+    // Check if wrestler is already used
+    if (isWrestlerAlreadyUsed(trimmedName)) {
+      alert(`"${trimmedName}" has already been assigned to another entry!`);
+      setSearchTerm('');
+      return;
+    }
+
+    onUpdateWrestler(entryNum, trimmedName);
     setEditingEntry(null);
     setSearchTerm('');
   };
@@ -107,15 +139,23 @@ const LiveMatchScreen = ({ players, assignments, wrestlers, eliminations, onUpda
                           />
                           {searchTerm && (
                             <div className="absolute z-10 w-full mt-1 bg-gray-900 border border-gray-700 rounded max-h-48 overflow-y-auto">
-                              {getFilteredWrestlers(searchTerm).map((name) => (
-                                <div
-                                  key={generateWrestlerId(name)}
-                                  onMouseDown={() => handleWrestlerSelect(entryNum, name)}
-                                  className="px-3 py-2 hover:bg-rumble-primary cursor-pointer"
-                                >
-                                  {name}
+                              {getFilteredWrestlers(searchTerm).length > 0 ? (
+                                getFilteredWrestlers(searchTerm).map((name) => (
+                                  <div
+                                    key={generateWrestlerId(name)}
+                                    onMouseDown={() => handleWrestlerSelect(entryNum, name)}
+                                    className="px-3 py-2 hover:bg-rumble-primary cursor-pointer"
+                                  >
+                                    {name}
+                                  </div>
+                                ))
+                              ) : (
+                                <div className="px-3 py-2 text-gray-500 italic">
+                                  {wrestlerList.some(w => w.toLowerCase().includes(searchTerm.toLowerCase()))
+                                    ? 'All matching wrestlers already assigned'
+                                    : 'No matches found - press Enter to add'}
                                 </div>
-                              ))}
+                              )}
                             </div>
                           )}
                         </div>
