@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { getPlayerEntries } from '../utils/gameLogic';
 
 const SetupScreen = ({ onStartGame }) => {
   const [players, setPlayers] = useState([{ name: '', numbers: [] }]);
   const [assignmentMode, setAssignmentMode] = useState('random'); // 'random' or 'manual'
   const [error, setError] = useState('');
+  const [manualInputs, setManualInputs] = useState({}); // Store raw text for manual inputs
 
   const addPlayer = () => {
     if (players.length < 30) {
@@ -15,6 +15,20 @@ const SetupScreen = ({ onStartGame }) => {
   const removePlayer = (index) => {
     if (players.length > 1) {
       setPlayers(players.filter((_, i) => i !== index));
+      // Clean up manual input for removed player
+      const newManualInputs = { ...manualInputs };
+      delete newManualInputs[index];
+      // Reindex remaining inputs
+      const reindexed = {};
+      Object.keys(newManualInputs).forEach(key => {
+        const idx = parseInt(key);
+        if (idx > index) {
+          reindexed[idx - 1] = newManualInputs[key];
+        } else {
+          reindexed[idx] = newManualInputs[key];
+        }
+      });
+      setManualInputs(reindexed);
     }
   };
 
@@ -24,29 +38,48 @@ const SetupScreen = ({ onStartGame }) => {
     setPlayers(newPlayers);
   };
 
-  const updatePlayerNumbers = (index, numbers) => {
-    const newPlayers = [...players];
-    newPlayers[index].numbers = numbers;
-    setPlayers(newPlayers);
+  const updateManualInput = (index, text) => {
+    // Just store the raw text, don't parse yet
+    setManualInputs({
+      ...manualInputs,
+      [index]: text
+    });
   };
 
   const parseNumbers = (text) => {
+    if (!text) return [];
     const numbers = text.split(',')
       .map(n => parseInt(n.trim()))
       .filter(n => !isNaN(n) && n >= 1 && n <= 30);
     return [...new Set(numbers)]; // Remove duplicates
   };
 
+  const parseAllManualInputs = () => {
+    // Parse all manual inputs when starting the game
+    const newPlayers = players.map((player, index) => ({
+      ...player,
+      numbers: parseNumbers(manualInputs[index] || '')
+    }));
+    setPlayers(newPlayers);
+    return newPlayers;
+  };
+
   const validateAndStart = () => {
+    // Parse manual inputs first if in manual mode
+    let playersToValidate = players;
+    if (assignmentMode === 'manual') {
+      playersToValidate = parseAllManualInputs();
+    }
+
     // Check all players have names
-    const emptyNames = players.some(p => !p.name.trim());
+    const emptyNames = playersToValidate.some(p => !p.name.trim());
     if (emptyNames) {
       setError('All players must have names');
       return;
     }
 
     // Check for duplicate names
-    const names = players.map(p => p.name.trim().toLowerCase());
+    const names = playersToValidate.map(p => p.name.trim().toLowerCase());
     if (new Set(names).size !== names.length) {
       setError('Player names must be unique');
       return;
@@ -56,7 +89,7 @@ const SetupScreen = ({ onStartGame }) => {
       // Validate manual number assignments
       const allNumbers = new Set();
 
-      players.forEach((player) => {
+      playersToValidate.forEach((player) => {
         player.numbers.forEach(num => {
           if (allNumbers.has(num)) {
             setError(`Number ${num} is assigned to multiple players`);
@@ -75,16 +108,16 @@ const SetupScreen = ({ onStartGame }) => {
 
       // Create assignments from manual entries
       const assignments = {};
-      players.forEach((player, playerIndex) => {
+      playersToValidate.forEach((player, playerIndex) => {
         player.numbers.forEach(num => {
           assignments[num] = playerIndex;
         });
       });
 
-      onStartGame(players.map(p => ({ name: p.name.trim() })), assignments);
+      onStartGame(playersToValidate.map(p => ({ name: p.name.trim() })), assignments);
     } else {
       // Random assignment - will be handled by the parent component
-      onStartGame(players.map(p => ({ name: p.name.trim() })), null);
+      onStartGame(playersToValidate.map(p => ({ name: p.name.trim() })), null);
     }
   };
 
@@ -166,8 +199,8 @@ const SetupScreen = ({ onStartGame }) => {
                   <input
                     type="text"
                     placeholder="Entry numbers (e.g., 1,15,30)"
-                    value={player.numbers.join(', ')}
-                    onChange={(e) => updatePlayerNumbers(index, parseNumbers(e.target.value))}
+                    value={manualInputs[index] || ''}
+                    onChange={(e) => updateManualInput(index, e.target.value)}
                     className="w-full px-3 py-2 bg-gray-900 rounded border border-gray-600 focus:border-rumble-primary focus:outline-none"
                   />
                 </div>
