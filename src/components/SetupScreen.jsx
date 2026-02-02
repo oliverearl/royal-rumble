@@ -5,6 +5,7 @@ const SetupScreen = ({ onStartGame }) => {
   const [assignmentMode, setAssignmentMode] = useState('random'); // 'random' or 'manual'
   const [error, setError] = useState('');
   const [manualInputs, setManualInputs] = useState({}); // Store raw text for manual inputs
+  const [inputErrors, setInputErrors] = useState({}); // Store validation errors for manual inputs
 
   const addPlayer = () => {
     if (players.length < 30) {
@@ -38,20 +39,79 @@ const SetupScreen = ({ onStartGame }) => {
     setPlayers(newPlayers);
   };
 
+  const validateManualInput = (text) => {
+    if (!text.trim()) {
+      return { valid: true, numbers: [] };
+    }
+
+    // Check for non-numerical characters (allow commas, spaces, and numbers only)
+    if (!/^[\d,\s]+$/.test(text)) {
+      return { valid: false, error: 'Only numbers and commas allowed', numbers: [] };
+    }
+
+    // Parse and validate numbers
+    const parts = text.split(',');
+    const numbers = [];
+
+    for (const part of parts) {
+      const trimmed = part.trim();
+      if (trimmed === '') continue;
+
+      const num = parseFloat(trimmed);
+
+      // Check for decimals
+      if (trimmed.includes('.')) {
+        return { valid: false, error: 'Decimals not allowed', numbers: [] };
+      }
+
+      // Check if it's a valid integer
+      if (!Number.isInteger(num)) {
+        return { valid: false, error: 'Invalid number format', numbers: [] };
+      }
+
+      // Check range
+      if (num < 1 || num > 30) {
+        return { valid: false, error: 'Numbers must be between 1-30', numbers: [] };
+      }
+
+      numbers.push(num);
+    }
+
+    // Check for duplicates within this input
+    const uniqueNumbers = [...new Set(numbers)];
+    if (uniqueNumbers.length !== numbers.length) {
+      return { valid: false, error: 'Duplicate numbers in entry', numbers: [] };
+    }
+
+    return { valid: true, numbers: uniqueNumbers };
+  };
+
   const updateManualInput = (index, text) => {
-    // Just store the raw text, don't parse yet
+    // Store the raw text
     setManualInputs({
       ...manualInputs,
       [index]: text
     });
+
+    // Validate input in real-time
+    if (text.trim()) {
+      const validation = validateManualInput(text);
+      setInputErrors({
+        ...inputErrors,
+        [index]: validation.error
+      });
+    } else {
+      // Clear error if input is empty
+      const newErrors = { ...inputErrors };
+      delete newErrors[index];
+      setInputErrors(newErrors);
+    }
   };
 
   const parseNumbers = (text) => {
     if (!text) return [];
-    const numbers = text.split(',')
-      .map(n => parseInt(n.trim()))
-      .filter(n => !isNaN(n) && n >= 1 && n <= 30);
-    return [...new Set(numbers)]; // Remove duplicates
+    const validation = validateManualInput(text);
+    return validation.valid ? validation.numbers : [];
   };
 
   const parseAllManualInputs = () => {
@@ -65,6 +125,12 @@ const SetupScreen = ({ onStartGame }) => {
   };
 
   const validateAndStart = () => {
+    // Check minimum players
+    if (players.length < 2) {
+      setError('At least 2 players are required to start the game');
+      return;
+    }
+
     // Parse manual inputs first if in manual mode
     let playersToValidate = players;
     if (assignmentMode === 'manual') {
@@ -86,20 +152,30 @@ const SetupScreen = ({ onStartGame }) => {
     }
 
     if (assignmentMode === 'manual') {
-      // Validate manual number assignments
+      // Check for input validation errors
+      const hasInputErrors = Object.values(inputErrors).some(err => err);
+      if (hasInputErrors) {
+        setError('Please fix validation errors in entry numbers');
+        return;
+      }
+
+      // Validate manual number assignments - check for duplicates across players
       const allNumbers = new Set();
+      const duplicates = [];
 
       playersToValidate.forEach((player) => {
         player.numbers.forEach(num => {
           if (allNumbers.has(num)) {
-            setError(`Number ${num} is assigned to multiple players`);
-            return;
+            duplicates.push(num);
           }
           allNumbers.add(num);
         });
       });
 
-      if (error) return;
+      if (duplicates.length > 0) {
+        setError(`Entry number(s) ${duplicates.join(', ')} assigned to multiple players`);
+        return;
+      }
 
       if (allNumbers.size === 0) {
         setError('At least one player must have entry numbers assigned');
@@ -207,8 +283,15 @@ const SetupScreen = ({ onStartGame }) => {
                     placeholder="Entry numbers (e.g., 1,15,30)"
                     value={manualInputs[index] || ''}
                     onChange={(e) => updateManualInput(index, e.target.value)}
-                    className="w-full px-3 py-2 bg-gray-900 rounded border border-gray-600 focus:border-rumble-primary focus:outline-none"
+                    className={`w-full px-3 py-2 bg-gray-900 rounded border focus:outline-none ${
+                      inputErrors[index]
+                        ? 'border-red-500 focus:border-red-400'
+                        : 'border-gray-600 focus:border-rumble-primary'
+                    }`}
                   />
+                  {inputErrors[index] && (
+                    <p className="text-red-400 text-xs mt-1">{inputErrors[index]}</p>
+                  )}
                 </div>
               )}
 
