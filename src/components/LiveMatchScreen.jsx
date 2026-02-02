@@ -14,8 +14,8 @@ const LiveMatchScreen = ({ players, assignments, wrestlers, eliminations, onUpda
   };
 
   useEffect(() => {
-    // Load wrestler list
-    fetch('/Rumble/data/wrestlers.json')
+    // Load wrestler list - use Vite's base URL
+    fetch(`${import.meta.env.BASE_URL}data/wrestlers.json`)
       .then(res => res.json())
       .then(data => setWrestlerList(data))
       .catch(err => console.error('Failed to load wrestlers:', err));
