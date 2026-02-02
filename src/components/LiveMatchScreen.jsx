@@ -96,7 +96,7 @@ const LiveMatchScreen = ({ players, assignments, wrestlers, eliminations, onUpda
                                 setEditingEntry(null);
                               }
                             }}
-                            onKeyPress={(e) => {
+                            onKeyDown={(e) => {
                               if (e.key === 'Enter' && searchTerm.trim()) {
                                 handleWrestlerSelect(entryNum, searchTerm.trim());
                               }
@@ -107,13 +107,13 @@ const LiveMatchScreen = ({ players, assignments, wrestlers, eliminations, onUpda
                           />
                           {searchTerm && (
                             <div className="absolute z-10 w-full mt-1 bg-gray-900 border border-gray-700 rounded max-h-48 overflow-y-auto">
-                              {getFilteredWrestlers(searchTerm).map((w) => (
+                              {getFilteredWrestlers(searchTerm).map((name) => (
                                 <div
-                                  key={w.id}
-                                  onMouseDown={() => handleWrestlerSelect(entryNum, w.name)}
+                                  key={generateWrestlerId(name)}
+                                  onMouseDown={() => handleWrestlerSelect(entryNum, name)}
                                   className="px-3 py-2 hover:bg-rumble-primary cursor-pointer"
                                 >
-                                  {w.name}
+                                  {name}
                                 </div>
                               ))}
                             </div>

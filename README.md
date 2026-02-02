@@ -87,14 +87,13 @@ Want to add more wrestlers? Edit `/public/data/wrestlers.json`:
 
 ```json
 [
-  {
-    "id": "wrestler_name",
-    "name": "Wrestler Display Name"
-  }
+  "Roman Reigns",
+  "Seth Rollins",
+  "Cody Rhodes"
 ]
 ```
 
-The `id` field should be a lowercase, underscore-separated version of the name.
+Simply add wrestler names to the array. IDs are generated automatically from the names.
 
 ## Usage Guide
 
