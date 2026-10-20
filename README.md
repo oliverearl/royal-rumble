@@ -36,13 +36,13 @@ This app lets you:
 
 ### Prerequisites
 
-- Node.js 18+ and npm
+- Node.js 20.19+ or 22.12+ and npm (Node.js 24 recommended, used in CI)
 
 ### Setup
 
 ```bash
 # Install dependencies
-npm install
+npm ci
 
 # Start dev server
 npm run dev
